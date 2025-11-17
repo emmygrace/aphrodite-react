@@ -64,7 +64,7 @@
     "d3": "^7.8.5"
   },
   "dependencies": {
-    "@gaia-tools/coeus-api-client": "file:../../gaia-api"
+    "@gaia-tools/coeus-api-client": "file:../coeus-api-client"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",
