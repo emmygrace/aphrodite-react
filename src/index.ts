@@ -1,5 +1,6 @@
 // Main exports
 export { useChartRender, type UseChartRenderOptions, type UseChartRenderResult } from './hooks/useChartRender';
+export { useOrientation, type UseOrientationOptions, type UseOrientationResult } from './hooks/useOrientation';
 export { ChartWheel, type ChartWheelProps } from './components/ChartWheel';
 export { buildIndexes } from './utils/buildIndexes';
 
