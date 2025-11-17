@@ -1,0 +1,83 @@
+{
+  "name": "@gaia-tools/aphrodite-react",
+  "version": "0.1.0",
+  "description": "React bindings for @gaia-tools/aphrodite chart renderer",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./hooks": {
+      "import": "./dist/hooks/index.mjs",
+      "types": "./dist/hooks/index.d.ts"
+    },
+    "./components": {
+      "import": "./dist/components/index.mjs",
+      "types": "./dist/components/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/hooks/index.ts src/components/index.ts src/server.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "astrology",
+    "chart",
+    "react",
+    "d3",
+    "svg",
+    "typescript",
+    "nextjs",
+    "ssr"
+  ],
+  "author": "Emmy Grace",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:emmygrace/aphrodite-core.git"
+  },
+  "homepage": "https://github.com/emmygrace/aphrodite-core",
+  "bugs": {
+    "url": "https://github.com/emmygrace/aphrodite-core/issues"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@gaia-tools/aphrodite": "^0.1.0",
+    "d3": "^7.8.5"
+  },
+  "dependencies": {
+    "@gaia-tools/coeus-api-client": "file:../../gaia-api"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/d3": "^7.4.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^24.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
+
