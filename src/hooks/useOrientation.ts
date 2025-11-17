@@ -2,11 +2,14 @@
  * React hook for managing chart orientation presets and ViewFrame configuration.
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import type {
   OrientationPreset,
+  OrientationProgram,
   ViewFrame,
   LockRule,
+  ChartSnapshot,
+  OrientationRuntimeState,
 } from '@gaia-tools/aphrodite-shared/orientation';
 import {
   allPresets,
@@ -14,6 +17,7 @@ import {
   getPresetByName,
   presetDefault,
 } from '@gaia-tools/aphrodite-shared/orientation';
+import { evalOrientationProgram } from '@gaia-tools/aphrodite-core/utils/viewFrame';
 
 export interface UseOrientationOptions {
   /**
@@ -21,11 +25,19 @@ export interface UseOrientationOptions {
    */
   initialPreset?: string | OrientationPreset;
   /**
-   * Custom ViewFrame (overrides preset if provided)
+   * Orientation program (overrides preset if provided)
+   */
+  program?: OrientationProgram;
+  /**
+   * Chart snapshot for program evaluation (required if program is provided)
+   */
+  chart?: ChartSnapshot;
+  /**
+   * Custom ViewFrame (overrides preset/program if provided)
    */
   customViewFrame?: ViewFrame;
   /**
-   * Custom lock rules (overrides preset if provided)
+   * Custom lock rules (overrides preset/program if provided)
    */
   customLocks?: LockRule[];
 }
@@ -70,27 +82,36 @@ export interface UseOrientationResult {
 }
 
 /**
+ * Convert a preset to an orientation program
+ */
+function resolvePreset(
+  presetOrId: string | OrientationPreset | undefined
+): OrientationPreset | null {
+  if (!presetOrId) {
+    return presetDefault;
+  }
+  if (typeof presetOrId === 'string') {
+    return getPresetById(presetOrId) ?? presetDefault;
+  }
+  return presetOrId;
+}
+
+/**
  * Hook for managing chart orientation.
- * Provides easy access to presets and custom orientation configuration.
+ * Provides easy access to presets, programs, and custom orientation configuration.
  */
 export function useOrientation(
   options: UseOrientationOptions = {}
 ): UseOrientationResult {
-  const { initialPreset, customViewFrame, customLocks } = options;
+  const { initialPreset, program, chart, customViewFrame, customLocks } = options;
 
   // Initialize state
   const getInitialPreset = useCallback((): OrientationPreset | null => {
-    if (customViewFrame) {
-      return null; // Custom frame takes precedence
+    if (customViewFrame || program) {
+      return null; // Custom frame or program takes precedence
     }
-    if (initialPreset) {
-      if (typeof initialPreset === 'string') {
-        return getPresetById(initialPreset) ?? presetDefault;
-      }
-      return initialPreset;
-    }
-    return presetDefault;
-  }, [initialPreset, customViewFrame]);
+    return resolvePreset(initialPreset);
+  }, [initialPreset, customViewFrame, program]);
 
   const [currentPreset, setCurrentPreset] = useState<OrientationPreset | null>(
     getInitialPreset
@@ -101,21 +122,62 @@ export function useOrientation(
   const [customLockRules, setCustomLockRules] = useState<LockRule[] | undefined>(
     customLocks
   );
+  const [runtimeState, setRuntimeState] = useState<OrientationRuntimeState | undefined>();
 
   // Compute current ViewFrame and locks
-  const viewFrame = useMemo(() => {
+  const { viewFrame, locks, newRuntimeState } = useMemo(() => {
+    // Custom frame takes highest precedence
     if (customFrame) {
-      return customFrame;
+      return {
+        viewFrame: customFrame,
+        locks: customLockRules ?? [],
+        newRuntimeState: runtimeState,
+      };
     }
-    return currentPreset?.frame ?? presetDefault.frame;
-  }, [customFrame, currentPreset]);
 
-  const locks = useMemo(() => {
+    // Custom locks take precedence over program/preset locks
     if (customLockRules) {
-      return customLockRules;
+      if (program && chart) {
+        const result = evalOrientationProgram(program, chart, runtimeState);
+        return {
+          viewFrame: result.frame,
+          locks: customLockRules,
+          newRuntimeState: result.state,
+        };
+      }
+      const preset = currentPreset ?? resolvePreset(initialPreset);
+      return {
+        viewFrame: preset?.frame ?? presetDefault.frame,
+        locks: customLockRules,
+        newRuntimeState: runtimeState,
+      };
     }
-    return currentPreset?.locks ?? presetDefault.locks;
-  }, [customLockRules, currentPreset]);
+
+    // Evaluate program if provided
+    if (program && chart) {
+      const result = evalOrientationProgram(program, chart, runtimeState);
+      return {
+        viewFrame: result.frame,
+        locks: result.locks,
+        newRuntimeState: result.state,
+      };
+    }
+
+    // Fall back to preset
+    const preset = currentPreset ?? resolvePreset(initialPreset);
+    return {
+      viewFrame: preset?.frame ?? presetDefault.frame,
+      locks: preset?.locks ?? presetDefault.locks,
+      newRuntimeState: runtimeState,
+    };
+  }, [customFrame, customLockRules, program, chart, runtimeState, currentPreset, initialPreset]);
+
+  // Update runtime state when it changes
+  useEffect(() => {
+    if (newRuntimeState !== runtimeState) {
+      setRuntimeState(newRuntimeState);
+    }
+  }, [newRuntimeState, runtimeState]);
 
   // Actions
   const setPreset = useCallback((presetId: string) => {
