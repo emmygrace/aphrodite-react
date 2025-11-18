@@ -65,7 +65,8 @@
   },
   "dependencies": {
     "@gaia-tools/coeus-api-client": "file:../coeus-api-client",
-    "@gaia-tools/aphrodite-shared": "file:../aphrodite-shared"
+    "@gaia-tools/aphrodite-shared": "file:../aphrodite-shared",
+    "@gaia-tools/aphrodite-core": "file:../aphrodite-core"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",
