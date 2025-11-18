@@ -1,2 +1,2 @@
-export { ChartWheel, type ChartWheelProps } from './ChartWheel';
+export { ChartWheel, type ChartWheelProps, type Theme } from './ChartWheel';
 

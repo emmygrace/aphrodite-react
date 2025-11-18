@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { VisualConfig, GlyphConfig } from '@gaia-tools/aphrodite';
 import { RenderResponse, IndexesDTO, RingItemDTO, RingDTO, AspectPairDTO, PlanetRingItem, HouseRingItem, SignRingItem } from '@gaia-tools/coeus-api-client';
+import './ChartWheel.css';
 
 export interface ChartWheelProps {
   renderData: RenderResponse;
@@ -13,6 +14,7 @@ export interface ChartWheelProps {
   centerX?: number;
   centerY?: number;
   rotationOffset?: number;
+  theme?: Theme;
   visualConfig?: VisualConfig;
   glyphConfig?: GlyphConfig;
   onItemClick?: (item: RingItemDTO, ring: RingDTO) => void;
@@ -159,28 +161,146 @@ function getSignIndex(signName: string): number | null {
 }
 
 /**
- * Default visual config values
+ * Theme type for dark mode color schemes
+ */
+export type Theme = 'traditional' | 'modern';
+
+/**
+ * Dark mode traditional theme - warm earth tones, gold accents
+ */
+const darkTraditionalTheme: VisualConfig = {
+  signColors: [
+    '#C0392B', // Aries - deep red
+    '#D68910', // Taurus - golden brown
+    '#F39C12', // Gemini - amber
+    '#85C1E2', // Cancer - soft blue
+    '#F7DC6F', // Leo - golden yellow
+    '#82E0AA', // Virgo - sage green
+    '#F8C471', // Libra - peach
+    '#8B4513', // Scorpio - sienna
+    '#F1C40F', // Sagittarius - bright gold
+    '#5D6D7E', // Capricorn - slate gray
+    '#3498DB', // Aquarius - sky blue
+    '#9B59B6', // Pisces - lavender
+  ],
+  houseColors: [
+    '#3A3A3A', // Dark gray with warm tint
+    '#404040',
+    '#454545',
+    '#4A4A4A',
+    '#505050',
+    '#555555',
+    '#3A3A3A',
+    '#404040',
+    '#454545',
+    '#4A4A4A',
+    '#505050',
+    '#555555',
+  ],
+  planetColors: [
+    '#F39C12', // Sun - golden
+    '#F7DC6F', // Moon - pale gold
+    '#D68910', // Mercury - bronze
+    '#F8C471', // Venus - peach
+    '#C0392B', // Mars - deep red
+    '#F1C40F', // Jupiter - bright gold
+    '#5D6D7E', // Saturn - slate
+    '#85C1E2', // Uranus - sky blue
+    '#3498DB', // Neptune - blue
+    '#8B4513', // Pluto - sienna
+  ],
+  aspectColors: {
+    conjunction: '#C0392B',
+    opposition: '#3498DB',
+    trine: '#27AE60',
+    square: '#E74C3C',
+    sextile: '#F39C12',
+    semisextile: '#D68910',
+    semisquare: '#E67E22',
+    sesquiquadrate: '#E67E22',
+    quincunx: '#8B4513',
+  },
+  backgroundColor: '#1a1a1a',
+  strokeColor: '#d4af37', // Gold
+  strokeWidth: 1,
+  aspectStrokeWidth: 2,
+};
+
+/**
+ * Dark mode modern theme - cooler contemporary colors
+ */
+const darkModernTheme: VisualConfig = {
+  signColors: [
+    '#E63946', // Aries - modern red
+    '#F77F00', // Taurus - warm orange
+    '#FCBF49', // Gemini - golden yellow
+    '#06A77D', // Cancer - teal
+    '#D62828', // Leo - deep red
+    '#A8DADC', // Virgo - light blue-green
+    '#A8DADC', // Libra - light blue
+    '#457B9D', // Scorpio - blue-gray
+    '#1D3557', // Sagittarius - navy
+    '#2A2D34', // Capricorn - dark gray
+    '#4A90E2', // Aquarius - bright blue
+    '#E91E63', // Pisces - pink
+  ],
+  houseColors: [
+    '#2A2A2A', // Neutral dark grays
+    '#333333',
+    '#3A3A3A',
+    '#404040',
+    '#474747',
+    '#4D4D4D',
+    '#2A2A2A',
+    '#333333',
+    '#3A3A3A',
+    '#404040',
+    '#474747',
+    '#4D4D4D',
+  ],
+  planetColors: [
+    '#FFB800', // Sun - bright yellow
+    '#E0E0E0', // Moon - light gray
+    '#FF6B6B', // Mercury - coral
+    '#4ECDC4', // Venus - turquoise
+    '#FF4757', // Mars - red
+    '#FFA502', // Jupiter - orange
+    '#5F27CD', // Saturn - purple
+    '#00D2D3', // Uranus - cyan
+    '#3742FA', // Neptune - blue
+    '#2F3542', // Pluto - dark gray
+  ],
+  aspectColors: {
+    conjunction: '#FF4757',
+    opposition: '#4A90E2',
+    trine: '#06A77D',
+    square: '#E63946',
+    sextile: '#FCBF49',
+    semisextile: '#F77F00',
+    semisquare: '#FF6B6B',
+    sesquiquadrate: '#FF6B6B',
+    quincunx: '#5F27CD',
+  },
+  backgroundColor: '#0f0f0f',
+  strokeColor: '#e0e0e0',
+  strokeWidth: 1,
+  aspectStrokeWidth: 2,
+};
+
+/**
+ * Get dark mode theme colors
+ */
+function getDarkModeTheme(theme: Theme): VisualConfig {
+  return theme === 'traditional' ? darkTraditionalTheme : darkModernTheme;
+}
+
+/**
+ * Default visual config values - now using dark mode traditional as default
  */
 const defaultVisualConfig: Required<VisualConfig> = {
   ringWidth: 30,
   ringSpacing: 10,
-  signColors: [
-    '#FF6B6B', '#FFA07A', '#FFD700', '#98D8C8', '#FF6347', '#F0E68C',
-    '#87CEEB', '#9370DB', '#FFA500', '#2F4F4F', '#00CED1', '#FF69B4',
-  ],
-  houseColors: [
-    '#E8E8E8', '#D3D3D3', '#C0C0C0', '#A9A9A9', '#808080', '#696969',
-    '#E8E8E8', '#D3D3D3', '#C0C0C0', '#A9A9A9', '#808080', '#696969',
-  ],
-  planetColors: [
-    '#FFD700', '#C0C0C0', '#FF6347', '#FFA500', '#FF4500', '#FFD700',
-    '#9370DB', '#00CED1', '#4169E1', '#8B4513',
-  ],
-  aspectColors: {},
-  aspectStrokeWidth: 2,
-  backgroundColor: '#FFFFFF',
-  strokeColor: '#000000',
-  strokeWidth: 1,
+  ...getDarkModeTheme('traditional'),
 };
 
 /**
@@ -201,18 +321,38 @@ const defaultGlyphConfig: Required<GlyphConfig> = {
 };
 
 /**
- * Merge visual config with defaults
+ * Merge visual config with defaults and theme
  */
-function mergeVisualConfig(config?: VisualConfig): Required<VisualConfig> {
-  if (!config) return defaultVisualConfig;
-  return {
-    ...defaultVisualConfig,
-    ...config,
-    signColors: config.signColors || defaultVisualConfig.signColors,
-    houseColors: config.houseColors || defaultVisualConfig.houseColors,
-    planetColors: config.planetColors || defaultVisualConfig.planetColors,
-    aspectColors: { ...defaultVisualConfig.aspectColors, ...(config.aspectColors || {}) },
-  };
+function mergeVisualConfig(config?: VisualConfig, theme?: Theme): Required<VisualConfig> {
+  // If explicit visualConfig is provided, use it (overrides theme)
+  if (config) {
+    return {
+      ...defaultVisualConfig,
+      ...config,
+      signColors: config.signColors || defaultVisualConfig.signColors,
+      houseColors: config.houseColors || defaultVisualConfig.houseColors,
+      planetColors: config.planetColors || defaultVisualConfig.planetColors,
+      aspectColors: { ...defaultVisualConfig.aspectColors, ...(config.aspectColors || {}) },
+    };
+  }
+  
+  // If theme is provided, use theme colors
+  if (theme) {
+    const themeConfig = getDarkModeTheme(theme);
+    return {
+      ...defaultVisualConfig,
+      ...themeConfig,
+      ringWidth: defaultVisualConfig.ringWidth,
+      ringSpacing: defaultVisualConfig.ringSpacing,
+      signColors: themeConfig.signColors || defaultVisualConfig.signColors,
+      houseColors: themeConfig.houseColors || defaultVisualConfig.houseColors,
+      planetColors: themeConfig.planetColors || defaultVisualConfig.planetColors,
+      aspectColors: { ...defaultVisualConfig.aspectColors, ...(themeConfig.aspectColors || {}) },
+    };
+  }
+  
+  // Default: use dark traditional
+  return defaultVisualConfig;
 }
 
 /**
@@ -246,6 +386,7 @@ export function ChartWheel(props: ChartWheelProps) {
       centerX,
       centerY,
       rotationOffset = 0,
+      theme,
       visualConfig,
       glyphConfig,
       onItemClick,
@@ -266,8 +407,10 @@ export function ChartWheel(props: ChartWheelProps) {
     const cx = centerX ?? width / 2;
     const cy = centerY ?? height / 2;
 
-    // Merge configs with defaults
-    const mergedVisualConfig = mergeVisualConfig(visualConfig);
+    // Merge configs with defaults and theme
+    // If visualConfig is provided, it overrides theme
+    // Otherwise, use theme if provided, or default to dark traditional
+    const mergedVisualConfig = mergeVisualConfig(visualConfig, theme);
     const mergedGlyphConfig = mergeGlyphConfig(glyphConfig);
 
     // Set background color FIRST so it's behind everything
@@ -361,8 +504,6 @@ export function ChartWheel(props: ChartWheelProps) {
                         .append('text')
                         .attr('x', 0)
                         .attr('y', 0)
-                        .attr('text-anchor', 'middle')
-                        .attr('dominant-baseline', 'middle')
                         .attr('font-size', `${glyphSize}px`)
                         .attr('font-family', mergedGlyphConfig.glyphFont || 'Arial')
                         .attr('fill', planetColor)
@@ -374,8 +515,6 @@ export function ChartWheel(props: ChartWheelProps) {
                         .append('text')
                         .attr('x', 0)
                         .attr('y', 0)
-                        .attr('text-anchor', 'middle')
-                        .attr('dominant-baseline', 'middle')
                         .attr('font-size', `${glyphSize}px`)
                         .attr('font-family', mergedGlyphConfig.glyphFont || 'Arial')
                         .attr('fill', planetColor)
@@ -397,10 +536,9 @@ export function ChartWheel(props: ChartWheelProps) {
                     const labelY = glyphSize + 4;
                     planetGroup
                       .append('text')
+                      .attr('class', 'planet-label')
                       .attr('x', 0)
                       .attr('y', labelY)
-                      .attr('text-anchor', 'middle')
-                      .attr('font-size', '9px')
                       .attr('fill', mergedVisualConfig.strokeColor || '#333')
                       .text(objectInfo.label);
 
@@ -408,15 +546,13 @@ export function ChartWheel(props: ChartWheelProps) {
                     const degreesText = formatDegreesMinutes(planetItem.lon, true);
                     planetGroup
                       .append('text')
+                      .attr('class', 'planet-degrees')
                       .attr('x', 0)
                       .attr('y', labelY + 12)
-                      .attr('text-anchor', 'middle')
-                      .attr('font-size', '8px')
                       .attr('fill', mergedVisualConfig.strokeColor || '#666')
                       .text(degreesText);
 
             if (onItemClick) {
-              planetGroup.style('cursor', 'pointer');
               planetGroup.on('click', () => onItemClick(item, ring));
             }
           } else if (item.kind === 'houseCusp') {
@@ -452,12 +588,9 @@ export function ChartWheel(props: ChartWheelProps) {
             // House number
             lineGroup
               .append('text')
+              .attr('class', 'house-number')
               .attr('x', labelPos.x)
               .attr('y', labelPos.y - 6)
-              .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'middle')
-              .attr('font-size', '10px')
-              .attr('font-weight', 'bold')
               .attr('fill', houseColor)
               .text(houseItem.houseIndex.toString());
             
@@ -465,17 +598,14 @@ export function ChartWheel(props: ChartWheelProps) {
             const cuspDegreesText = formatSignDegreesMinutes(houseItem.lon, true);
             lineGroup
               .append('text')
+              .attr('class', 'house-degrees')
               .attr('x', labelPos.x)
               .attr('y', labelPos.y + 8)
-              .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'middle')
-              .attr('font-size', '8px')
               .attr('fill', houseColor)
               .attr('opacity', 0.8)
               .text(cuspDegreesText);
 
             if (onItemClick) {
-              lineGroup.style('cursor', 'pointer');
               lineGroup.on('click', () => onItemClick(item, ring));
             }
           } else if (item.kind === 'sign') {
@@ -585,8 +715,6 @@ export function ChartWheel(props: ChartWheelProps) {
                   .append('text')
                   .attr('x', labelPos.x)
                   .attr('y', labelPos.y)
-                  .attr('text-anchor', 'middle')
-                  .attr('dominant-baseline', 'middle')
                   .attr('font-size', `${(mergedGlyphConfig.glyphSize || 12) * 0.8}px`)
                   .attr('font-family', mergedGlyphConfig.glyphFont || 'Arial')
                   .attr('fill', signColor)
@@ -603,11 +731,9 @@ export function ChartWheel(props: ChartWheelProps) {
                 // Fallback: use label
                 signGroup
                   .append('text')
+                  .attr('class', 'sign-label')
                   .attr('x', labelPos.x)
                   .attr('y', labelPos.y)
-                  .attr('text-anchor', 'middle')
-                  .attr('dominant-baseline', 'middle')
-                  .attr('font-size', '9px')
                   .attr('fill', signColor)
                   .attr('opacity', 1)
                   .text(signItem.label || signItem.id);
@@ -616,11 +742,9 @@ export function ChartWheel(props: ChartWheelProps) {
               // Fallback: use label
               signGroup
                 .append('text')
+                .attr('class', 'sign-label')
                 .attr('x', labelPos.x)
                 .attr('y', labelPos.y)
-                .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'middle')
-                .attr('font-size', '9px')
                 .attr('fill', signColor)
                 .attr('opacity', 1)
                 .text(signItem.label || signItem.id);
@@ -629,17 +753,14 @@ export function ChartWheel(props: ChartWheelProps) {
             // Add sign cusp degrees at the start of the sign
             signGroup
               .append('text')
+              .attr('class', 'sign-cusp')
               .attr('x', cuspPos.x)
               .attr('y', cuspPos.y)
-              .attr('text-anchor', 'middle')
-              .attr('dominant-baseline', 'middle')
-              .attr('font-size', '7px')
               .attr('fill', signColor)
               .attr('opacity', 0.7)
               .text(cuspDegreesText);
 
             if (onItemClick) {
-              signGroup.style('cursor', 'pointer');
               signGroup.on('click', () => onItemClick(item, ring));
             }
           }
@@ -688,6 +809,7 @@ export function ChartWheel(props: ChartWheelProps) {
     centerX,
     centerY,
     rotationOffset,
+    theme,
     visualConfig,
     glyphConfig,
     onItemClick,
