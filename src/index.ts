@@ -1,7 +1,7 @@
 // Main exports
 export { useChartRender, type UseChartRenderOptions, type UseChartRenderResult } from './hooks/useChartRender';
 export { useOrientation, type UseOrientationOptions, type UseOrientationResult } from './hooks/useOrientation';
-export { ChartWheel, type ChartWheelProps, type Theme } from './components/ChartWheel';
+export { ChartWheel, type ChartWheelOptions, type Theme } from './components/ChartWheel';
 export { buildIndexes } from './utils/buildIndexes';
 
 // Re-export types from aphrodite for convenience
