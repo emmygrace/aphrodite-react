@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildIndexes } from '../buildIndexes';
 import { createMockRenderResponse, createMinimalRenderResponse } from '../../test/fixtures';
-import type { RenderResponse } from '@gaia-tools/coeus-api-client';
+import type { RenderResponse } from '@gaia-tools/iris-core';
 
 describe('buildIndexes', () => {
   it('builds planet indexes from render data', () => {

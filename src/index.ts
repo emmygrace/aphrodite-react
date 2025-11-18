@@ -5,8 +5,8 @@ export { useOrientation, type UseOrientationOptions, type UseOrientationResult }
 // Re-export ChartWheel from aphrodite-core (framework-agnostic)
 export { ChartWheel, type ChartWheelOptions, type Theme } from '@gaia-tools/aphrodite-core';
 
-// Re-export buildIndexes from coeus-api-client
-export { buildIndexes } from '@gaia-tools/coeus-api-client';
+// Re-export buildIndexes from iris-core
+export { buildIndexes } from '@gaia-tools/iris-core';
 
 // Re-export types from aphrodite-core for convenience
 export type {
@@ -14,12 +14,12 @@ export type {
   GlyphConfig,
 } from '@gaia-tools/aphrodite-core';
 
-// Re-export types from coeus-api-client
+// Re-export types from iris-core
 export type {
   RenderResponse,
   IndexesDTO,
   RingItemDTO,
   RingDTO,
   AspectPairDTO,
-} from '@gaia-tools/coeus-api-client';
+} from '@gaia-tools/iris-core';
 

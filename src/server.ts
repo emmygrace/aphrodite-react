@@ -1,3 +1,3 @@
 // Server-side exports (no React dependencies)
-export { buildIndexes } from '@gaia-tools/coeus-api-client';
+export { buildIndexes } from '@gaia-tools/iris-core';
 

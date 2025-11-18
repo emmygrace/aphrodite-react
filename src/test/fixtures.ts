@@ -12,7 +12,7 @@ import type {
   HouseRingItem,
   SignRingItem,
   AspectRingItem,
-} from '@gaia-tools/coeus-api-client';
+} from '@gaia-tools/iris-core';
 
 /**
  * Creates a basic mock RenderResponse for testing

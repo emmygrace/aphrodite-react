@@ -61,14 +61,15 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@gaia-tools/aphrodite": "^0.1.0",
+    "@gaia-tools/iris-core": "^0.1.0",
     "d3": "^7.8.5"
   },
   "dependencies": {
-    "@gaia-tools/coeus-api-client": "file:../coeus-api-client",
     "@gaia-tools/aphrodite-shared": "file:../aphrodite-shared",
     "@gaia-tools/aphrodite-core": "file:../aphrodite-core"
   },
   "devDependencies": {
+    "@gaia-tools/iris-core": "file:../iris-core",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
@@ -82,4 +83,3 @@
     "vitest": "^1.0.0"
   }
 }
-

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ChartWheel } from '../ChartWheel';
 import { createMockRenderResponse, createMinimalRenderResponse } from '../../test/fixtures';
-import type { RenderResponse, IndexesDTO } from '@gaia-tools/coeus-api-client';
+import type { RenderResponse, IndexesDTO } from '@gaia-tools/iris-core';
 
 // Mock d3 - define everything inside the factory to avoid hoisting issues
 vi.mock('d3', () => {

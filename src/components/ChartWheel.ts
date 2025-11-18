@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { VisualConfig, GlyphConfig } from '@gaia-tools/aphrodite';
-import { RenderResponse, IndexesDTO, RingItemDTO, RingDTO, AspectPairDTO, PlanetRingItem, HouseRingItem, SignRingItem } from '@gaia-tools/coeus-api-client';
+import { RenderResponse, IndexesDTO, RingItemDTO, RingDTO, AspectPairDTO, PlanetRingItem, HouseRingItem, SignRingItem } from '@gaia-tools/iris-core';
 
 // Note: CSS should be imported separately by the consumer
 // import './ChartWheel.css';

@@ -1,4 +1,4 @@
-import { RenderResponse, RingDTO, RingItemDTO, AspectPairDTO, AspectSetDTO, AspectObjectRef, IndexesDTO } from '@gaia-tools/coeus-api-client';
+import { RenderResponse, RingDTO, RingItemDTO, AspectPairDTO, AspectSetDTO, AspectObjectRef, IndexesDTO } from '@gaia-tools/iris-core';
 
 /**
  * Builds lookup indexes from render response for fast interaction.

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ApiClient, RenderResponse, IndexesDTO } from '@gaia-tools/coeus-api-client';
+import { IrisApiClient, RenderResponse, IndexesDTO } from '@gaia-tools/iris-core';
 import { buildIndexes } from '../utils/buildIndexes';
 
 export type UseChartRenderOptions = {
@@ -22,7 +22,7 @@ export type UseChartRenderResult = {
  * This is the main data fetching hook for chart rendering.
  */
 export function useChartRender(
-  apiClient: ApiClient,
+  apiClient: IrisApiClient,
   options: UseChartRenderOptions
 ): UseChartRenderResult {
   const { instanceId, wheelIdOverride, enabled = true } = options;
@@ -42,7 +42,9 @@ export function useChartRender(
       setError(null);
 
       try {
-        const renderData = await apiClient.instances.render(instanceId, wheelIdOverride);
+        // Note: iris-core only has render endpoint, not instances
+        // This hook may need to be updated to work with the new API structure
+        throw new Error('useChartRender needs to be updated for iris-core API structure');
         if (!cancelled) {
           setData(renderData);
         }
@@ -85,8 +87,9 @@ export function useChartRender(
     setIsError(false);
     setError(null);
 
-    apiClient.instances
-      .render(instanceId, wheelIdOverride)
+    // Note: iris-core only has render endpoint, not instances
+    // This hook may need to be updated to work with the new API structure
+    Promise.reject(new Error('useChartRender needs to be updated for iris-core API structure'))
       .then((renderData) => {
         setData(renderData);
         setIsLoading(false);
